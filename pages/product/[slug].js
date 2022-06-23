@@ -2,14 +2,33 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useContext } from "react";
+import { toast } from "react-toastify";
 import Layout from "../../components/Layout";
 import data from "../../utils/data";
+import { Store } from "../../utils/store";
 
 const productScreen = () => {
-  const { query } = useRouter();
-  const { slug } = query;
+  const router = useRouter();
+  const { state, dispatch } = useContext(Store);
+  const { slug } = router.query;
   const product = data?.products.find((x) => x.slug === slug);
+
+  const addToCartHandler = () => {
+    const existItem = state.cart.cartItems.find(
+      (item) => item.slug === product.slug
+    );
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+
+    if (product.countInStock < quantity) {
+      toast.error("Sorry. Product is out of stock!");
+
+      return;
+    }
+
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
+    router.push("/cart");
+  };
   if (!product) {
     return <div>Product not found!</div>;
   }
@@ -54,7 +73,12 @@ const productScreen = () => {
                 {product?.countInStock > 0 ? "In Stock" : "Unavailable"}{" "}
               </div>
             </div>
-            <button className="w-full primary-button">Add to cart</button>
+            <button
+              className="w-full primary-button"
+              onClick={addToCartHandler}
+            >
+              Add to cart
+            </button>
           </div>
         </div>
       </div>
