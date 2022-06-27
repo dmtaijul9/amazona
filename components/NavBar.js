@@ -27,7 +27,7 @@ const NavBar = () => {
             )}
           </a>
         </Link>
-        <Link href="/loging">
+        <Link href="/login">
           <a className="p-2">Login</a>
         </Link>
       </div>

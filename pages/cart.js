@@ -100,7 +100,7 @@ const cart = () => {
               </li>
               <li>
                 <button
-                  onClick={() => router.push("/shipping")}
+                  onClick={() => router.push("login?redirect=/shipping")}
                   className="w-full primary-button"
                 >
                   Check Out
