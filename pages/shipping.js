@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import CheckoutWizard from "../components/CheckoutWizard";
@@ -14,6 +15,7 @@ const shipping = () => {
     setValue,
   } = useForm();
 
+  const router = useRouter();
   const { state, dispatch } = useContext(Store);
   const { cart } = state;
   const { shippingAddress } = cart;
@@ -43,6 +45,7 @@ const shipping = () => {
         },
       })
     );
+    router.push("/payment");
   };
   return (
     <Layout title="Shipping Address">
