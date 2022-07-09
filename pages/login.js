@@ -1,17 +1,46 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
+import { signIn, useSession } from "next-auth/react";
+import { toast } from "react-toastify";
+import { getError } from "../utils/error";
+import { useRouter } from "next/router";
 
 const login = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { redirect } = router.query;
+
+  useEffect(() => {
+    if (session?.user) {
+      router.push(redirect || "/");
+    }
+  }, [session, router, redirect]);
+
   const {
     handleSubmit,
     register,
     formState: { errors },
+    // eslint-disable-next-line react-hooks/rules-of-hooks
   } = useForm();
 
-  const submitHandle = ({ email, password }) => {
+  const submitHandle = async ({ email, password }) => {
     console.log(email, password);
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (err) {
+      toast.error(getError(err));
+    }
   };
 
   return (
